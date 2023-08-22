@@ -1,0 +1,113 @@
+/** lint:disable no-vendor-prefixes */
+
+/** linter:disable property-no-vendor-prefix */
+.btn {
+  font-family: BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+  padding: 12px;
+  display: inline-block;
+  font-weight: 500;
+  outline: none;
+  position: relative;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.btn-style-border {
+  border-style: solid;
+  border-width: 0.1rem;
+  border-color: #07c;
+  color: #07c;
+}
+
+.btn-style-fill {
+  border-style: none;
+  background-color: #07c;
+  color: #fff;
+}
+
+.btn:after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+/* Pseudo elements for icons */
+.btn:before {
+  font-family: "FontAwesome";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn-sep:before {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* Button 1 */
+/* .btn-1 {
+  background: #07c;
+  color: #fff;
+} */
+
+/* .btn-1:hover {
+  background: #07c;
+  bottom: 1px;
+  text-decoration: underline;
+} */
+
+.btn-style-fill:hover {
+  background: #07c;
+  bottom: 1px;
+  text-decoration: underline;
+}
+
+.btn-style-border:hover {
+  background: white;
+  bottom: 1px;
+  text-decoration: underline;
+}
+
+/* .btn-1:active {
+  background: #07c;
+  top: 2px;
+} */
+
+.btn-style-border:active {
+  background: white;
+  top: 2px;
+}
+
+.btn-style-fill:active {
+  background: #07c;
+  top: 2px;
+}
+
+.btn-1:before {
+  position: absolute;
+  height: 100%;
+  left: 0;
+  top: 0;
+  line-height: 3;
+  font-size: 140%;
+  width: 60px;
+}
+
+.btn-1:disabled {
+  border: 1px solid #999;
+  background-color: #ccc;
+  color: #666;
+  pointer-events: none;
+  padding: 10px 20px;
+}
