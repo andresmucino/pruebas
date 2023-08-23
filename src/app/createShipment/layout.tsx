@@ -1,6 +1,7 @@
 "use client";
 
 import { Providers } from "@/common";
+import { ToastsProvider } from "@/hooks";
 import { AuthProvider } from "@/hooks/login";
 
 export default function CreateShipmentLayout({
@@ -10,9 +11,11 @@ export default function CreateShipmentLayout({
 }) {
   return (
     <AuthProvider>
-      <Providers>
-        <main>{children}</main>
-      </Providers>
+      <ToastsProvider>
+        <Providers>
+          <main>{children}</main>
+        </Providers>
+      </ToastsProvider>
     </AuthProvider>
   );
 }

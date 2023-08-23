@@ -1,10 +1,9 @@
 import { gql } from "graphql-request";
 
-export const CreatePackages = gql`
-  mutation CreateOneDelivery($input: InputCreatePackage!) {
-    createDelivery(input: $input) {
+export const CreateManyPackages = gql`
+  mutation createDeliveries($input: InputCreatePackages!) {
+    createDeliveries(input: $input) {
       id
-      clientId
       guide
     }
   }

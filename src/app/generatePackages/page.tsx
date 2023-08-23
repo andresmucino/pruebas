@@ -9,16 +9,14 @@ import {
   EuiFilePicker,
   EuiFormRow,
   EuiHorizontalRule,
-  EuiPageHeader,
   EuiPageHeaderContent,
   EuiPanel,
-  EuiSkeletonText,
   EuiText,
 } from "@elastic/eui";
 import { useMutation } from "@tanstack/react-query";
 import { ReactNode, useEffect, useState } from "react";
 import Papa from "papaparse";
-import { CreatePackages, graphQLClient } from "@/graphql";
+import { CreateManyPackages } from "@/graphql";
 import { useToastsContext } from "@/hooks/useToastAlertProvider/useToastContext";
 import { Toast } from "@elastic/eui/src/components/toast/global_toast_list";
 import { useRouter } from "next/navigation";
@@ -48,7 +46,7 @@ export default function GeneratePackages() {
   const { mutate, isLoading, error, data, status } = useMutation({
     mutationKey: ["createManyPackages"],
     mutationFn: (createManyPackages: any) => {
-      return client.request(CreatePackages, createManyPackages);
+      return client.request(CreateManyPackages, createManyPackages);
     },
   });
 
@@ -101,40 +99,40 @@ export default function GeneratePackages() {
     );
   }, [files]);
 
+  console.log(items);
+
   const submitManyPackages = () => {
-    for (let i = 0; i < items.length; i++) {
-      mutate(
-        { input: items[i] },
-        {
-          onSuccess: () => {
-            const newToast: Toast[] = [];
-            newToast.push({
-              id: "1",
-              title: "Guias",
-              text: <p>Creadas correctamente</p>,
-              color: "success",
-            });
-            pushToast(newToast);
-            router.push("/packages");
-          },
-          onError: () => {
-            const newToast: Toast[] = [];
-            newToast.push({
-              id: "2",
-              title: "Cliente",
-              text: (
-                <p>
-                  No se pudieron guardar algunas guias correctamente, verifica
-                  la informacion ingresada, intenta de nuevo
-                </p>
-              ),
-              color: "danger",
-            });
-            pushToast(newToast);
-          },
-        }
-      );
-    }
+    mutate(
+      { input: { packages: items } },
+      {
+        onSuccess: () => {
+          const newToast: Toast[] = [];
+          newToast.push({
+            id: "1",
+            title: "Guias",
+            text: <p>Creadas correctamente</p>,
+            color: "success",
+          });
+          pushToast(newToast);
+          router.push("/packages");
+        },
+        onError: () => {
+          const newToast: Toast[] = [];
+          newToast.push({
+            id: "2",
+            title: "Cliente",
+            text: (
+              <p>
+                No se pudieron guardar algunas guias correctamente, verifica la
+                informacion ingresada, intenta de nuevo
+              </p>
+            ),
+            color: "danger",
+          });
+          pushToast(newToast);
+        },
+      }
+    );
   };
 
   const toggleDetails = (item: any) => {

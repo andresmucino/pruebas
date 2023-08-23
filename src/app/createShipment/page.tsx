@@ -2,40 +2,105 @@
 
 import { Button, Header, LoadingPage } from "@/components";
 import {
+  EuiFlexGroup,
+  EuiFlexItem,
   EuiForm,
   EuiHorizontalRule,
   EuiPageHeaderContent,
   EuiPanel,
 } from "@elastic/eui";
-import { InputCreateShipment } from "./inputCreateShipment";
-import { useForm } from "react-hook-form";
+import { Toast } from "@elastic/eui/src/components/toast/global_toast_list";
+import {
+  InputCreateShipment,
+  InputGeneralForm,
+  StatePackages,
+} from "./inputCreateShipment";
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import {
   AddPackagesToShipments,
-  CreatePackages,
+  CreateManyPackages,
   GenerateShipment,
-  graphQLClient,
 } from "@/graphql";
 import { nanoid } from "nanoid";
 import { useRouter } from "next/navigation";
 import { UseAuthContext } from "@/hooks/login";
+import { API_URL, GenerateDeliveryInterface } from "@/common";
+import { GraphQLClient } from "graphql-request";
+import { useToastsContext } from "@/hooks";
+
+const packagesInterface = {
+  street: "",
+  neigthboorhood: "",
+  municipality: "",
+  state: "",
+  zipCode: "",
+  externalNumber: "",
+  internalNumber: "",
+  latitude: "",
+  longitude: "",
+  firstName: "",
+  lastName: "",
+  phone: "",
+  email: "",
+  weigth: 0,
+  width: 0,
+  heigth: 0,
+  length: 0,
+};
 
 export default function CreateShipment() {
   const router = useRouter();
   const { user } = UseAuthContext();
-  const {
-    register,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const { globalToasts, pushToast } = useToastsContext();
+  const [packages, setPackages] = useState(packagesInterface);
+
+  const [packagesArray, setPackagesArray] = useState<any[]>([
+    packagesInterface,
+  ]);
+  const [deliveryData, setDeliveryData] = useState({
+    instructions: "",
+    idClient: "",
+    warehouseShipmentId: "",
+  });
+
+  const [deliveryDataValidate, setDeliveryDataValidate] = useState({
+    instructions: false,
+    idClient: false,
+    warehouseShipmentId: false,
+  });
+
+  const [validate, setValidate] = useState({
+    street: false,
+    neigthboorhood: false,
+    municipality: false,
+    state: false,
+    zipCode: false,
+    externalNumber: false,
+    firstName: false,
+    lastName: false,
+    phone: false,
+    email: false,
+  });
+
+  const [saveData, setSaveData] = useState<Array<GenerateDeliveryInterface>>(
+    []
+  );
+
+  const apiUrl = `${API_URL}/graphql`;
+
+  const client = new GraphQLClient(apiUrl, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${user?.stsTokenManager?.accessToken}`,
+    },
+  });
 
   const { mutate: mutateGeneratePackage, status: statusGeneratePakcage } =
     useMutation({
-      mutationKey: ["createOnePackages"],
+      mutationKey: ["createManyPackages"],
       mutationFn: (packages: any) => {
-        return graphQLClient.request(CreatePackages, packages);
+        return client.request(CreateManyPackages, packages);
       },
     });
 
@@ -43,7 +108,7 @@ export default function CreateShipment() {
     useMutation({
       mutationKey: ["createShipment"],
       mutationFn: (shipment: any) => {
-        return graphQLClient.request(GenerateShipment, shipment);
+        return client.request(GenerateShipment, shipment);
       },
     });
 
@@ -51,96 +116,171 @@ export default function CreateShipment() {
     useMutation({
       mutationKey: ["addPackagesShipment"],
       mutationFn: (addPackages: any) => {
-        return graphQLClient.request(AddPackagesToShipments, addPackages);
+        return client.request(AddPackagesToShipments, addPackages);
       },
     });
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-    let packagesType: any;
-    if (data.packageType === "envelope") {
-      packagesType = { heigth: 1, length: 1, width: 1, weigth: 1 };
-    }
-    if (data.packageType === "box_small") {
-      packagesType = { heigth: 25, length: 40, width: 30, weigth: 1 };
-    }
-    if (data.packageType === "box_medium") {
-      packagesType = { heigth: 30, length: 30, width: 40, weigth: 15 };
-    }
-    if (data.packageType === "box_big") {
-      packagesType = { heigth: 40, length: 40, width: 50, weigth: 25 };
-    }
+  let storageData;
+
+  const dataStorage = () => {
+    setPackagesArray([...packagesArray, packages]);
+    setPackages(packagesInterface);
+  };
+
+  if (typeof window !== "undefined") {
+    localStorage.setItem("packages", JSON.stringify(packagesArray));
+
+    storageData = JSON.parse(localStorage.getItem("packages") as string);
+  }
+
+  useEffect(() => {
+    setSaveData(
+      packagesArray.map((pkg: any) => ({
+        length: pkg.length,
+        weigth: pkg.weigth,
+        width: pkg.width,
+        heigth: pkg.heigth,
+        guide: nanoid(),
+        idClient: Number(deliveryData.idClient),
+        contact: {
+          firstName: pkg.firstName,
+          lastName: pkg.lastName,
+          phone: `+52 ${pkg.phone}`,
+          email: pkg.email,
+        },
+        direction: {
+          street: pkg.street,
+          externalNumber: pkg.externalNumber,
+          internalNumber: pkg.internalNumber,
+          municipality: pkg.municipality,
+          neigthboorhood: pkg.neigthboorhood,
+          state: pkg.state,
+          zipCode: pkg.zipCode,
+          latitude: Number(pkg.latitude),
+          longitude: Number(pkg.longitude),
+        },
+      }))
+    );
+  }, [packagesArray]);
+
+  const onSubmit = (e: any) => {
+    e.preventDefault();
+
+    let mutation = saveData.slice(1);
 
     mutateGeneratePackage(
+      { input: { packages: mutation } },
       {
-        input: {
-          weigth: packagesType.weigth,
-          width: packagesType.width,
-          heigth: packagesType.heigth,
-          length: packagesType.length,
-          guide: nanoid(),
-          contact: {
-            firstName: data.firstName,
-            lastName: data.lastName,
-            phone: "+52" + data.phone,
-            email: data.email,
-          },
-          direction: {
-            street: data.street,
-            neigthboorhood: data.neigthboorhood,
-            municipality: data.municipality,
-            state: data.state,
-            zipCode: data.zipCode,
-            externalNumber: data.externalNumber,
-            internalNumber: data.internalNumber,
-            latitude: Number(data.latitude),
-            longitude: Number(data.longitude),
-          },
-          idClient: Number(data.idClient),
-        },
-      },
-      {
-        onSuccess: (datasuccess: any) => {
-          console.log(datasuccess, "genera guides");
+        onSuccess: (data: any) => {
+          const createDeliveries = data.createDeliveries.map(
+            (item: any) => item.guide
+          );
           mutateGenerateShipment(
             {
               input: {
-                comments: data.instructions,
-                clientId: datasuccess.createDelivery.clientId,
-                warehouseShipmentId: Number(data.warehouseShipmentId),
+                comments: deliveryData.instructions,
+                clientId: Number(deliveryData.idClient),
+                warehouseShipmentId: Number(deliveryData.warehouseShipmentId),
               },
             },
             {
               onSuccess: (data: any) => {
-                console.log(data, "genera un envio");
                 mutateAddPackageShipment(
                   {
                     input: {
                       shipmentId: data.generateShipment.id,
-                      guides: datasuccess.createDelivery.guide,
+                      guides: createDeliveries,
                     },
                   },
                   {
-                    onError: (error) => {
-                      console.log(error);
+                    onSuccess: (data: any) => {
+                      const newToast: Toast[] = [];
+                      newToast.push({
+                        id: "1",
+                        title: "Delivery",
+                        text: (
+                          <p>ID del delivery {data.addPackageShipment.id}</p>
+                        ),
+                        color: "success",
+                      });
+                      pushToast(newToast);
                     },
-                    onSuccess: (data) => {
-                      console.log(data, "agrega packages");
+                    onError: (error: any) => {
+                      const newToast: Toast[] = [];
+                      newToast.push({
+                        id: "2",
+                        title: "Delivery",
+                        text: (
+                          <p>Error al crear el delivery, intenta de nuevo</p>
+                        ),
+                        color: "danger",
+                      });
+                      pushToast(newToast);
                     },
                   }
                 );
               },
-              onError: (error) => {
-                console.log(error);
+              onError: (error: any) => {
+                const newToast: Toast[] = [];
+                newToast.push({
+                  id: "3",
+                  title: "Delivery",
+                  text: <p>Error al crear el delivery, intenta de nuevo</p>,
+                  color: "danger",
+                });
+                pushToast(newToast);
               },
             }
           );
         },
         onError: (error) => {
-          console.log(error);
+          const newToast: Toast[] = [];
+          newToast.push({
+            id: "4",
+            title: "Delivery",
+            text: <p>Error al crear el delivery, intenta de nuevo</p>,
+            color: "danger",
+          });
+          pushToast(newToast);
         },
       }
     );
+  };
+
+  const validateFields = () => {
+    let valid = true;
+    if (
+      packages.street === "" ||
+      validate.street ||
+      packages.externalNumber === "" ||
+      validate.externalNumber ||
+      packages.neigthboorhood === "" ||
+      validate.neigthboorhood ||
+      packages.state === "" ||
+      validate.state ||
+      packages.municipality === "" ||
+      validate.municipality ||
+      packages.zipCode === "" ||
+      validate.zipCode ||
+      packages.firstName === "" ||
+      validate.firstName ||
+      packages.lastName === "" ||
+      validate.lastName ||
+      packages.phone === "" ||
+      validate.phone ||
+      packages.email === "" ||
+      validate.email ||
+      deliveryData.idClient === "" ||
+      deliveryDataValidate.idClient ||
+      deliveryData.instructions === "" ||
+      deliveryDataValidate.instructions ||
+      deliveryData.warehouseShipmentId === "" ||
+      deliveryDataValidate.warehouseShipmentId
+    ) {
+      valid = false;
+    }
+
+    return !valid;
   };
 
   useEffect(() => {
@@ -150,6 +290,7 @@ export default function CreateShipment() {
   }, [user]);
 
   const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -160,24 +301,53 @@ export default function CreateShipment() {
     <EuiPageHeaderContent>
       {user !== null && (
         <>
-          <EuiPanel style={{ margin: "2vh", height: "700px" }}>
-            <EuiForm component="form" onSubmit={handleSubmit(onSubmit)}>
+          <EuiPanel style={{ margin: "2vh", height: "auto" }}>
+            <EuiForm component="form" onSubmit={onSubmit}>
               <Header title={`Crear envio`}>
-                <Button type="submit" size="m" fill>
+                <Button
+                  type="submit"
+                  size="m"
+                  fill
+                  isLoading={
+                    statusAddPackageShipment === "loading" ||
+                    statusGeneratePakcage === "loading" ||
+                    statusGenerateShipment === "loading"
+                  }
+                >
                   Crear
                 </Button>
               </Header>
               <EuiHorizontalRule />
-
-              <InputCreateShipment
-                register={register}
-                setValue={setValue}
-                errors={errors}
-              />
+              <EuiFlexGroup>
+                <EuiFlexItem grow={3}>
+                  <InputGeneralForm
+                    deliveryData={deliveryData}
+                    setDeliveryData={setDeliveryData}
+                    validateGeneralForm={deliveryDataValidate}
+                    setValidateGeneralForm={setDeliveryDataValidate}
+                  />
+                </EuiFlexItem>
+                <EuiFlexItem grow={6}>
+                  <InputCreateShipment
+                    packageData={packages}
+                    setPackageData={setPackages}
+                    validateInput={validate}
+                    setValidateInput={setValidate}
+                  />
+                </EuiFlexItem>
+                <EuiFlexItem grow={3}>
+                  <StatePackages
+                    onClick={dataStorage}
+                    storageData={storageData}
+                    isDisabled={validateFields()}
+                  />
+                </EuiFlexItem>
+              </EuiFlexGroup>
             </EuiForm>
           </EuiPanel>
         </>
       )}
+      {globalToasts}
     </EuiPageHeaderContent>
   );
 }

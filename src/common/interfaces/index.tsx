@@ -5,4 +5,5 @@ export * from "./PackagesShipment.interface";
 export * from "./WarehouseShipment.interface";
 export * from "./MessengerShipment.interface";
 export * from "./WarehouseShipments.interface";
-export * from './GeneratePackages.interface'
+export * from "./GeneratePackages.interface";
+export * from "./GenerateDellivery.interface";

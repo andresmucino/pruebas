@@ -10,7 +10,7 @@ import {
   TableBody,
 } from "@/components";
 import { ClientsQuery, CreateOneClientQuery, graphQLClient } from "@/graphql";
-import { useToastsContext } from "@/hooks/useToastAlertProvider/useToastContext";
+import { useToastsContext } from "@/hooks";
 import { Toast } from "@elastic/eui/src/components/toast/global_toast_list";
 import {
   EuiBasicTableColumn,
