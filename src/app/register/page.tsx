@@ -76,11 +76,11 @@ export default function About() {
             <EuiFlexGroup>
               <EuiFlexItem></EuiFlexItem>
               <EuiFlexItem grow={1} style={{ justifyContent: "center" }}>
-                <GeneralForm
+                {/* <GeneralForm
                   register={register}
                   setValue={setValue}
                   errors={errors}
-                />
+                /> */}
                 <div style={{ width: "150px" }}>
                   <EuiSpacer />
                   <Button type="submit" isLoading={status === "loading"}>
