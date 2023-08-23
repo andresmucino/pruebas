@@ -10,9 +10,9 @@ import {
   TableBody,
 } from "@/components";
 import {
-  CreateMessengerQuery,
   GetMessengersQuery,
-  graphQLClient,
+  RegisterOneMessenger,
+  clientGeneric,
 } from "@/graphql";
 import { useGeneratedGQLQuery } from "@/hooks";
 import { UseAuthContext } from "@/hooks/login";
@@ -29,12 +29,13 @@ import { Toast } from "@elastic/eui/src/components/toast/global_toast_list";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 
 export default function Messengers() {
   const queryCache: any = useQueryClient();
   const router = useRouter();
   const { user } = UseAuthContext();
+  const apiUrl = `${API_URL}/graphql`;
+
   const initialIndex = 0;
   const initialPageZize = 10;
   const pageSizeOptions = [
@@ -51,6 +52,18 @@ export default function Messengers() {
   const [totalCount, setTotalCount] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [messengers, setMessengers] = useState<MessengerInterface[]>([]);
+  const [generalFormData, setGeneralFormData] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+  });
+  const [validateGeneralFormData, setValidateGeneralFormData] = useState({
+    firstName: false,
+    lastName: false,
+    phone: false,
+    email: false,
+  });
 
   const { globalToasts, pushToast } = useToastsContext();
 
@@ -65,7 +78,7 @@ export default function Messengers() {
     isFetching,
     status: getMessengerQuerystatus,
   } = useGeneratedGQLQuery<unknown | any, unknown, unknown, unknown>(
-    `${API_URL}/graphql`,
+    apiUrl,
     "getMessengers",
     GetMessengersQuery,
     queryVars
@@ -74,27 +87,23 @@ export default function Messengers() {
   const { mutate, status: createOneMessengerStatus } = useMutation({
     mutationKey: ["createOneMessenger"],
     mutationFn: (messenger: any) => {
-      return graphQLClient.request(CreateMessengerQuery, messenger);
+      return clientGeneric(apiUrl, user).request(
+        RegisterOneMessenger,
+        messenger
+      );
     },
   });
 
-  const {
-    register,
-    formState: { errors },
-    setValue,
-    handleSubmit,
-  } = useForm();
+  const onSubmit = (e: any) => {
+    e.preventDefault();
 
-  const onSubmit = (data: any) => {
     mutate(
       {
         input: {
-          messenger: {
-            firstName: data.firstName,
-            lastName: data.lastName,
-            phone: `+52 ${data.phone}`,
-            email: data.email,
-          },
+          firstName: generalFormData.firstName,
+          lastName: generalFormData.lastName,
+          phone: `+52 ${generalFormData.phone}`,
+          email: generalFormData.email,
         },
       },
       {
@@ -108,22 +117,55 @@ export default function Messengers() {
           });
           pushToast(newToast);
         },
-        onSuccess: () => {
+        onSuccess: (data: any) => {
           if (isFetching === false) {
             queryCache.removeQueries("getMessengers", { stale: false });
           }
           setShowModal(false);
+
+          setGeneralFormData({
+            email: "",
+            firstName: "",
+            lastName: "",
+            phone: "",
+          });
+
           const newToast: Toast[] = [];
           newToast.push({
             id: "1",
             title: "Mensajero",
-            text: <p>Creado correctamente</p>,
+            text: (
+              <>
+                <p>Creado correctamente</p>
+                <p>comparte la url con el mensajero</p>
+                <p>url: {data.registerCourier.url}</p>
+              </>
+            ),
             color: "success",
           });
           pushToast(newToast);
         },
       }
     );
+  };
+
+  const validateFields = () => {
+    let valid = true;
+
+    if (
+      generalFormData.firstName === "" ||
+      validateGeneralFormData.firstName ||
+      generalFormData.lastName === "" ||
+      validateGeneralFormData.lastName ||
+      generalFormData.phone === "" ||
+      validateGeneralFormData.phone ||
+      generalFormData.email === "" ||
+      validateGeneralFormData.email
+    ) {
+      valid = false;
+    }
+
+    return !valid;
   };
 
   useEffect(() => {
@@ -213,11 +255,12 @@ export default function Messengers() {
               onCloseModal={() => setShowModal(!showModal)}
               titleModal={"Crear mensajero"}
             >
-              <EuiForm component="form" onSubmit={handleSubmit(onSubmit)}>
+              <EuiForm component="form" onSubmit={onSubmit}>
                 <GeneralForm
-                  register={register}
-                  setValue={setValue}
-                  errors={errors}
+                  generalFormData={generalFormData}
+                  setGeneralFormData={setGeneralFormData}
+                  validateGeneralFormData={validateGeneralFormData}
+                  setValidateGeneralFormData={setValidateGeneralFormData}
                 />
                 <EuiModalFooter>
                   <Button onClick={() => setShowModal(!showModal)}>
@@ -227,6 +270,7 @@ export default function Messengers() {
                     type="submit"
                     fill
                     isLoading={createOneMessengerStatus === "loading"}
+                    isDisabled={validateFields()}
                   >
                     Guardar
                   </Button>

@@ -13,8 +13,9 @@ import {
   AddPackagesToShipments,
   GenerateShipment,
   GetPackages,
+  clientGeneric,
 } from "@/graphql";
-import { useGeneratedGQLQuery, useGeneratedMutation } from "@/hooks";
+import { useGeneratedGQLQuery } from "@/hooks";
 import { UseAuthContext } from "@/hooks/login";
 import { useToastsContext } from "@/hooks/useToastAlertProvider/useToastContext";
 import {
@@ -30,7 +31,7 @@ import {
   EuiTableSelectionType,
 } from "@elastic/eui";
 import { Toast } from "@elastic/eui/src/components/toast/global_toast_list";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -39,6 +40,8 @@ import { useForm } from "react-hook-form";
 export default function Packages() {
   const router = useRouter();
   const { user } = UseAuthContext();
+  const apiUrl = `${API_URL}/graphql`;
+
   const initialIndex = 0;
   const initialPageZize = 10;
   const pageSizeOptions = [
@@ -96,19 +99,32 @@ export default function Packages() {
     unknown,
     unknown,
     unknown
-  >(`${API_URL}/graphql`, "getPackages", GetPackages, queryVars);
+  >(apiUrl, "getPackages", GetPackages, queryVars);
 
   const {
     mutate: mutateGenerateShipment,
     status: statusGenerateShipment,
     error: ErrorGenerateShipment,
-  } = useGeneratedMutation(`${API_URL}/graphql`, GenerateShipment);
+  } = useMutation({
+    mutationKey: ["generateShioment"],
+    mutationFn: (shipment: any) => {
+      return clientGeneric(apiUrl, user).request(GenerateShipment, shipment);
+    },
+  });
 
   const {
     mutate: mutateAddPackagesShipment,
     status: statusAddPackagesShipment,
     error: errorAddPackagesShipment,
-  } = useGeneratedMutation(`${API_URL}/graphql`, AddPackagesToShipments);
+  } = useMutation({
+    mutationKey: ["addPackagesToShipment"],
+    mutationFn: (addPackagesShiment: any) => {
+      return clientGeneric(apiUrl, user).request(
+        AddPackagesToShipments,
+        addPackagesShiment
+      );
+    },
+  });
 
   const onSubmit = (data: any) => {
     mutateGenerateShipment(
@@ -145,7 +161,10 @@ export default function Packages() {
                   id: "2",
                   title: "Paquetes",
                   text: (
-                    <p>Se agregaron correctamente los paquetes a la orden</p>
+                    <p>
+                      Se agregaron correctamente los paquetes, orden:
+                      {data.generateShipment.id}
+                    </p>
                   ),
                   color: "success",
                 });

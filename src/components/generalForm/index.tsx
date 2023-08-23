@@ -4,12 +4,28 @@ import {
   EuiFlexItem,
   EuiFormRow,
 } from "@elastic/eui";
-import { useState } from "react";
+
+export interface GeneralFormData {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+}
+
+export interface ValidateGeneralFormData {
+  firstName: boolean;
+  lastName: boolean;
+  phone: boolean;
+  email: boolean;
+}
 
 export interface GeneralFormProps {
-  register: any;
-  setValue: (name: string, value: string) => void;
-  errors: any;
+  generalFormData: GeneralFormData;
+  setGeneralFormData: React.Dispatch<React.SetStateAction<GeneralFormData>>;
+  validateGeneralFormData: ValidateGeneralFormData;
+  setValidateGeneralFormData: React.Dispatch<
+    React.SetStateAction<ValidateGeneralFormData>
+  >;
 }
 
 function validateEmail(inputText: string) {
@@ -33,21 +49,78 @@ function validatePhone(inputText: string) {
 }
 
 export const GeneralForm: React.FC<GeneralFormProps> = ({
-  errors,
-  register,
-  setValue,
+  generalFormData,
+  setGeneralFormData,
+  setValidateGeneralFormData,
+  validateGeneralFormData,
 }) => {
-  const [inputValue, setInputValue] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
-    email: "",
-  });
-
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setInputValue({ ...inputValue, [name]: value });
-    setValue(name, value);
+
+    setGeneralFormData({ ...generalFormData, [name]: value });
+  };
+
+  const onBlurValidator = (e: any) => {
+    const { name, value } = e.target;
+
+    if (name === "firstName") {
+      if (value.length === 0 || value.length > 25 || value.length < 3) {
+        setValidateGeneralFormData({
+          ...validateGeneralFormData,
+          firstName: true,
+        });
+      } else {
+        setValidateGeneralFormData({
+          ...validateGeneralFormData,
+          firstName: false,
+        });
+      }
+    }
+    if (name === "lastName") {
+      if (value.length === 0 || value.length > 25 || value.length < 3) {
+        setValidateGeneralFormData({
+          ...validateGeneralFormData,
+          lastName: true,
+        });
+      } else {
+        setValidateGeneralFormData({
+          ...validateGeneralFormData,
+          lastName: false,
+        });
+      }
+    }
+    if (name === "phone") {
+      if (
+        (value.length === 0 || value.length > 10 || value.length < 10) &&
+        !validatePhone(value)
+      ) {
+        setValidateGeneralFormData({
+          ...validateGeneralFormData,
+          phone: true,
+        });
+      } else {
+        setValidateGeneralFormData({
+          ...validateGeneralFormData,
+          phone: false,
+        });
+      }
+    }
+    if (name === "email") {
+      if (
+        (value.length === 0 || value.length > 30 || value.length < 5) &&
+        !validateEmail(value)
+      ) {
+        setValidateGeneralFormData({
+          ...validateGeneralFormData,
+          email: true,
+        });
+      } else {
+        setValidateGeneralFormData({
+          ...validateGeneralFormData,
+          email: false,
+        });
+      }
+    }
   };
 
   return (
@@ -55,56 +128,55 @@ export const GeneralForm: React.FC<GeneralFormProps> = ({
       <EuiFlexItem>
         <EuiFormRow
           id="1"
-          error={errors.firstName && "Ingresa nombre"}
-          isInvalid={inputValue.firstName === ""}
+          error={["Ingresa nombre"]}
+          isInvalid={validateGeneralFormData.firstName}
         >
           <EuiFieldText
             name="firstName"
             placeholder="Nombre"
             onChange={handleChange}
-            inputRef={register("firstName", {
-              required: inputValue.firstName === "",
-            })}
+            onBlur={onBlurValidator}
+            value={generalFormData.firstName}
           />
         </EuiFormRow>
         <EuiFormRow
           id="2"
-          error={errors.lastName && "Ingresa Apellido"}
-          isInvalid={inputValue.lastName === ""}
+          error={["Ingresa Apellido"]}
+          isInvalid={validateGeneralFormData.lastName}
         >
           <EuiFieldText
             name="lastName"
             placeholder="Apellido"
             onChange={handleChange}
-            inputRef={register("lastName", {
-              required: inputValue.lastName === "",
-            })}
+            onBlur={onBlurValidator}
+            value={generalFormData.lastName}
           />
         </EuiFormRow>
         <EuiFormRow
           id="3"
-          error={errors.phone && "Ingresa nuemero tefefonico a 10 digitos"}
-          isInvalid={inputValue.phone === ""}
+          error={["Ingresa número tefefónico a 10 digitos"]}
+          isInvalid={validateGeneralFormData.phone}
         >
           <EuiFieldText
             name="phone"
-            placeholder="Numero"
+            placeholder="Número telefónico"
             onChange={handleChange}
-            inputRef={register("phone", {
-              required: inputValue.phone && "Número requerido",
-            })}
+            onBlur={onBlurValidator}
+            value={generalFormData.phone}
           />
         </EuiFormRow>
         <EuiFormRow
           id="4"
-          error={errors.email && "Ingresa un correo valido"}
-          isInvalid={inputValue.email === ""}
+          error={["Ingresa un correo válido"]}
+          isInvalid={validateGeneralFormData.email}
         >
           <EuiFieldText
             name="email"
             placeholder="Correo"
             onChange={handleChange}
-            inputRef={register("email", { required: inputValue.email === "" })}
+            onBlur={onBlurValidator}
+            value={generalFormData.email}
+            type="email"
           />
         </EuiFormRow>
       </EuiFlexItem>

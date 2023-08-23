@@ -259,7 +259,7 @@ export const InputCreateShipment: React.FC<InputCreateShipmentProps> = ({
       }
     }
     if (name === "zipCode") {
-      if (value.length === 0 || value.length > 30 || value.length < 3) {
+      if (value.length === 0 || value.length > 6 || value.length < 3) {
         setValidateInput({
           ...validateInput,
           zipCode: true,
@@ -298,7 +298,7 @@ export const InputCreateShipment: React.FC<InputCreateShipmentProps> = ({
       }
     }
     if (name === "phone") {
-      if (value.length === 0 || value.length > 30 || value.length < 3) {
+      if (value.length === 0 || value.length > 10 || value.length < 9) {
         setValidateInput({
           ...validateInput,
           phone: true,

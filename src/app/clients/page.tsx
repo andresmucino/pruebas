@@ -9,7 +9,7 @@ import {
   Modal,
   TableBody,
 } from "@/components";
-import { ClientsQuery, CreateOneClientQuery, graphQLClient } from "@/graphql";
+import { ClientsQuery, RegisterOneClient, clientGeneric } from "@/graphql";
 import { useToastsContext } from "@/hooks";
 import { Toast } from "@elastic/eui/src/components/toast/global_toast_list";
 import {
@@ -23,7 +23,6 @@ import {
 } from "@elastic/eui";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import { API_URL, ClientsInterface } from "@/common";
 import { useGeneratedGQLQuery } from "@/hooks";
 import { UseAuthContext } from "@/hooks/login";
@@ -33,6 +32,7 @@ export default function Clients() {
   const queryCache: any = useQueryClient();
   const router = useRouter();
   const { user } = UseAuthContext();
+  const apiUrl = `${API_URL}/graphql`;
 
   const initialIndex = 0;
   const initialPageZize = 10;
@@ -51,6 +51,18 @@ export default function Clients() {
   const [showModal, setShowModal] = useState(false);
   const [clients, setClients] = useState<ClientsInterface[]>([]);
   const { globalToasts, pushToast } = useToastsContext();
+  const [generalFormData, setGeneralFormData] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+  });
+  const [validateGeneralFormData, setValidateGeneralFormData] = useState({
+    firstName: false,
+    lastName: false,
+    phone: false,
+    email: false,
+  });
 
   const queryVars = {
     filter: {},
@@ -63,7 +75,7 @@ export default function Clients() {
     isFetching,
     status: getQueryClientsStatus,
   } = useGeneratedGQLQuery<unknown | any, unknown | any, unknown, unknown>(
-    `${API_URL}/graphql`,
+    apiUrl,
     "getClients",
     ClientsQuery,
     queryVars
@@ -72,27 +84,20 @@ export default function Clients() {
   const { mutate, status: createOneQueryStatus } = useMutation({
     mutationKey: ["createOneClient"],
     mutationFn: (client: any) => {
-      return graphQLClient.request(CreateOneClientQuery, client);
+      return clientGeneric(apiUrl, user).request(RegisterOneClient, client);
     },
   });
 
-  const {
-    register,
-    formState: { errors },
-    setValue,
-    handleSubmit,
-  } = useForm();
+  const onSubmit = (e: any) => {
+    e.preventDefault();
 
-  const onSubmit = (data: any) => {
     mutate(
       {
         input: {
-          client: {
-            firstName: data.firstName,
-            lastName: data.lastName,
-            phone: `+52 ${data.phone}`,
-            email: data.email,
-          },
+          firstName: generalFormData.firstName,
+          lastName: generalFormData.lastName,
+          phone: `+52 ${generalFormData.phone}`,
+          email: generalFormData.email,
         },
       },
       {
@@ -106,22 +111,55 @@ export default function Clients() {
           });
           pushToast(newToast);
         },
-        onSuccess: () => {
+        onSuccess: (data: any) => {
           if (isFetching === false) {
             queryCache.removeQueries("getClients", { stale: false });
           }
           setShowModal(false);
+
+          setGeneralFormData({
+            email: "",
+            firstName: "",
+            lastName: "",
+            phone: "",
+          });
+
           const newToast: Toast[] = [];
           newToast.push({
             id: "1",
             title: "Cliente",
-            text: <p>Creado correctamente</p>,
+            text: (
+              <>
+                <p>Creado correctamente</p>
+                <p>comparte la url con el cliente</p>
+                <p>url: {data.registerClient.url}</p>
+              </>
+            ),
             color: "success",
           });
           pushToast(newToast);
         },
       }
     );
+  };
+
+  const validateFields = () => {
+    let valid = true;
+
+    if (
+      generalFormData.firstName === "" ||
+      validateGeneralFormData.firstName ||
+      generalFormData.lastName === "" ||
+      validateGeneralFormData.lastName ||
+      generalFormData.phone === "" ||
+      validateGeneralFormData.phone ||
+      generalFormData.email === "" ||
+      validateGeneralFormData.email
+    ) {
+      valid = false;
+    }
+
+    return !valid;
   };
 
   useEffect(() => {
@@ -162,7 +200,7 @@ export default function Clients() {
     },
     {
       field: "phone",
-      name: "Telefono",
+      name: "Teléfono",
     },
     {
       field: "email",
@@ -210,13 +248,14 @@ export default function Clients() {
             <>
               <Modal
                 onCloseModal={() => setShowModal(!showModal)}
-                titleModal={"Crear Cliente"}
+                titleModal={"Crear cliente"}
               >
-                <EuiForm component="form" onSubmit={handleSubmit(onSubmit)}>
+                <EuiForm component="form" onSubmit={onSubmit}>
                   <GeneralForm
-                    register={register}
-                    setValue={setValue}
-                    errors={errors}
+                    generalFormData={generalFormData}
+                    setGeneralFormData={setGeneralFormData}
+                    validateGeneralFormData={validateGeneralFormData}
+                    setValidateGeneralFormData={setValidateGeneralFormData}
                   />
                   <EuiSpacer />
                   <EuiModalFooter>
@@ -228,8 +267,9 @@ export default function Clients() {
                       fill
                       size="m"
                       isLoading={createOneQueryStatus === "loading"}
+                      isDisabled={validateFields()}
                     >
-                      guardar
+                      Guardar
                     </Button>
                   </EuiModalFooter>
                 </EuiForm>

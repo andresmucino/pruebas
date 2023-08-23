@@ -7,7 +7,11 @@ import {
   WarehouseShipmentInterface,
 } from "@/common";
 import { Button, Header, LoadingPage, badges } from "@/components";
-import { AssignCourierShipment, GetShipment, graphQLClient } from "@/graphql";
+import {
+  AssignCourierShipment,
+  GetShipment,
+  clientGeneric,
+} from "@/graphql";
 import { useGeneratedGQLQuery } from "@/hooks";
 import {
   EuiFieldText,
@@ -30,6 +34,8 @@ export default function Shipments() {
   const router = useRouter();
   const { user } = UseAuthContext();
   const queryCache: any = useQueryClient();
+  const apiUrl = `${API_URL}/graphql`;
+
   const [packagesShipment, setPackagesShipment] = useState<
     PackagesShipmentInterface[]
   >([]);
@@ -47,12 +53,12 @@ export default function Shipments() {
     unknown,
     unknown,
     unknown
-  >(`${API_URL}/graphql`, "getShipment", GetShipment, { id: params.id });
+  >(apiUrl, "getShipment", GetShipment, { id: params.id });
 
   const { mutate, status: assignCourierShipmentStatus } = useMutation({
     mutationKey: ["assignCourierShipment"],
     mutationFn: (assignCourierShipment: any) => {
-      return graphQLClient.request(
+      return clientGeneric(apiUrl, user).request(
         AssignCourierShipment,
         assignCourierShipment
       );

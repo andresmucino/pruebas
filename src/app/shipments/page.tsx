@@ -5,7 +5,7 @@ import { Button, Header, LoadingPage, Popover, TableBody } from "@/components";
 import {
   AssignCourierShipment,
   ShipmentsQuery,
-  graphQLClient,
+  clientGeneric,
 } from "@/graphql";
 import { useGeneratedGQLQuery } from "@/hooks";
 import { UseAuthContext } from "@/hooks/login";
@@ -98,6 +98,8 @@ export default function Shipments() {
   const router = useRouter();
   const { user } = UseAuthContext();
   const queryCache: any = useQueryClient();
+  const apiUrl = `${API_URL}/graphql`;
+
   const initialIndex = 0;
   const initialPageZize = 10;
   const pageSizeOptions = [
@@ -127,12 +129,12 @@ export default function Shipments() {
     unknown,
     unknown,
     unknown
-  >(`${API_URL}/graphql`, "getShipments", ShipmentsQuery, queryVars);
+  >(apiUrl, "getShipments", ShipmentsQuery, queryVars);
 
   const { mutate, status: assignCourierShipmentStatus } = useMutation({
     mutationKey: ["assignCourierShipment"],
     mutationFn: (assignCourierShipment: any) => {
-      return graphQLClient.request(
+      return clientGeneric(apiUrl, user).request(
         AssignCourierShipment,
         assignCourierShipment
       );

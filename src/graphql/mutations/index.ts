@@ -1,5 +1,5 @@
-export * from "./createOneClient";
-export * from "./createOneMessenger";
+export * from "./registerOneClient";
+export * from "./registerOneMessenger";
 export * from "./createOnePackage";
 export * from "./generateShipment";
 export * from "./addPackagesToShipment";

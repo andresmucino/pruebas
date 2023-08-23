@@ -16,12 +16,11 @@ import { ReactNode, useEffect, useState } from "react";
 import {
   CreateWarehouseShipment,
   GetWarehouseShipments,
-  graphQLClient,
+  clientGeneric,
 } from "@/graphql";
 import { useGeneratedGQLQuery } from "@/hooks";
 import { API_URL, WarehouseShipmentsInterface } from "@/common";
 import { InputWarehouseClient } from "./inputWarehouseClient";
-import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Toast } from "@elastic/eui/src/components/toast/global_toast_list";
 import { useToastsContext } from "@/hooks/useToastAlertProvider/useToastContext";
@@ -33,6 +32,8 @@ export default function GeneratePackages() {
   const router = useRouter();
   const { user } = UseAuthContext();
   const queryCache: any = useQueryClient();
+  const apiUrl = `${API_URL}/graphql`;
+
   const initialIndex = 0;
   const initialPageZize = 10;
   const pageSizeOptions = [
@@ -52,6 +53,37 @@ export default function GeneratePackages() {
   >({});
   const [items, setItems] = useState<Array<WarehouseShipmentsInterface>>([]);
   const [showModal, setShowModal] = useState(false);
+  const [warehouseData, setWarehouseData] = useState({
+    instructions: "",
+    clientId: "",
+    street: "",
+    neigthboorhood: "",
+    municipality: "",
+    state: "",
+    zipCode: "",
+    externalNumber: "",
+    internalNumber: "",
+    latitude: "",
+    longitude: "",
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+  });
+  const [validate, setValidate] = useState({
+    street: false,
+    neigthboorhood: false,
+    municipality: false,
+    state: false,
+    zipCode: false,
+    externalNumber: false,
+    firstName: false,
+    lastName: false,
+    phone: false,
+    email: false,
+    instructions: false,
+    clientId: false,
+  });
 
   const { globalToasts, pushToast } = useToastsContext();
 
@@ -62,18 +94,11 @@ export default function GeneratePackages() {
   };
 
   const {
-    setValue,
-    register,
-    formState: { errors },
-    handleSubmit,
-  } = useForm();
-
-  const {
     data: dataWarehouse,
     status: statusWahouse,
     isFetching,
   } = useGeneratedGQLQuery<unknown | any, unknown, unknown, unknown>(
-    `${API_URL}/graphql`,
+    apiUrl,
     "getWarehouseShipments",
     GetWarehouseShipments,
     queryVars
@@ -82,33 +107,38 @@ export default function GeneratePackages() {
   const { mutate, status: createOneWarehouseStatus } = useMutation({
     mutationKey: ["createOneWarehouse"],
     mutationFn: (warehouse: any) => {
-      return graphQLClient.request(CreateWarehouseShipment, warehouse);
+      return clientGeneric(apiUrl, user).request(
+        CreateWarehouseShipment,
+        warehouse
+      );
     },
   });
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit = (e: any) => {
+    e.preventDefault();
+
     const input = {
-      instructions: data.instructions,
-      clientId: Number(data.clientId),
+      instructions: warehouseData.instructions,
+      clientId: Number(warehouseData.clientId),
       direction: {
-        street: data.street,
-        neigthboorhood: data.neigthboorhood,
-        municipality: data.municipality,
-        state: data.state,
-        zipCode: data.zipCode,
-        externalNumber: data.externalNumber,
-        internalNumber: data.internalNumber,
-        latitude: Number(data.latitude),
-        longitude: Number(data.longitude),
+        street: warehouseData.street,
+        neigthboorhood: warehouseData.neigthboorhood,
+        municipality: warehouseData.municipality,
+        state: warehouseData.state,
+        zipCode: warehouseData.zipCode,
+        externalNumber: warehouseData.externalNumber,
+        internalNumber: warehouseData.internalNumber,
+        latitude: Number(warehouseData.latitude),
+        longitude: Number(warehouseData.longitude),
       },
       contact: {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phone: data.phone,
-        email: data.email,
+        firstName: warehouseData.firstName,
+        lastName: warehouseData.lastName,
+        phone: warehouseData.phone,
+        email: warehouseData.email,
       },
     };
+
     mutate(
       { input },
       {
@@ -121,6 +151,9 @@ export default function GeneratePackages() {
             color: "danger",
           });
           pushToast(newToast);
+
+          setWarehouseData(warehouseData);
+
           setShowModal(!showModal);
           if (isFetching === false) {
             queryCache.removeQueries("getWarehouseShipments", { stale: false });
@@ -140,23 +173,57 @@ export default function GeneratePackages() {
     );
   };
 
+  const validateFields = () => {
+    let valid = true;
+    if (
+      warehouseData.street === "" ||
+      validate.street ||
+      warehouseData.externalNumber === "" ||
+      validate.externalNumber ||
+      warehouseData.neigthboorhood === "" ||
+      validate.neigthboorhood ||
+      warehouseData.state === "" ||
+      validate.state ||
+      warehouseData.municipality === "" ||
+      validate.municipality ||
+      warehouseData.zipCode === "" ||
+      validate.zipCode ||
+      warehouseData.firstName === "" ||
+      validate.firstName ||
+      warehouseData.lastName === "" ||
+      validate.lastName ||
+      warehouseData.phone === "" ||
+      validate.phone ||
+      warehouseData.email === "" ||
+      validate.email ||
+      warehouseData.instructions === "" ||
+      validate.instructions ||
+      warehouseData.clientId === "" ||
+      validate.clientId
+    ) {
+      valid = false;
+    }
+
+    return !valid;
+  };
+
   useEffect(() => {
     if (statusWahouse === "success") {
       setItems(
-        dataWarehouse.warehouseShipments.nodes.map((wh: any) => ({
+        dataWarehouse.warehouseShipments?.nodes.map((wh: any) => ({
           id: wh.id,
           instructions: wh.instructions,
           fullName: `${wh.client.firstName} ${wh.client.lastName}`,
           phone: wh.client.phone,
           email: wh.client.email,
           createdAt: moment
-          .utc(wh.createdAt)
-          .local()
-          .format("DD-MM-YYYY HH:mm"),
+            .utc(wh.createdAt)
+            .local()
+            .format("DD-MM-YYYY HH:mm"),
           updatedAt: moment
-          .utc(wh.updatedAt)
-          .local()
-          .format("DD-MM-YYYY HH:mm"),
+            .utc(wh.updatedAt)
+            .local()
+            .format("DD-MM-YYYY HH:mm"),
           street: wh.direction.street,
           neigthboorhood: wh.direction.neigthboorhood,
           municipality: wh.direction.municipality,
@@ -171,7 +238,7 @@ export default function GeneratePackages() {
           emailContact: wh.contact.email,
         }))
       );
-      setTotalCount(dataWarehouse.warehouseShipments.totalCount);
+      setTotalCount(dataWarehouse.warehouseShipments?.totalCount);
     }
   }, [dataWarehouse]);
 
@@ -371,11 +438,12 @@ export default function GeneratePackages() {
               titleModal={"Crear Almacén"}
               minWdith={950}
             >
-              <EuiForm component="form" onSubmit={handleSubmit(onSubmit)}>
+              <EuiForm component="form" onSubmit={onSubmit}>
                 <InputWarehouseClient
-                  register={register}
-                  setValue={setValue}
-                  errors={errors}
+                  warehouseData={warehouseData}
+                  setWarehouseData={setWarehouseData}
+                  validateDataWarehouse={validate}
+                  setValidateDataWarehouse={setValidate}
                 />
                 <EuiModalFooter>
                   <Button onClick={() => setShowModal(!showModal)} size="m">
@@ -386,6 +454,7 @@ export default function GeneratePackages() {
                     fill
                     size="m"
                     isLoading={createOneWarehouseStatus === "loading"}
+                    isDisabled={validateFields()}
                   >
                     Crear
                   </Button>
