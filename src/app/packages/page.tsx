@@ -35,7 +35,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 
 export default function Packages() {
   const router = useRouter();
@@ -63,12 +62,17 @@ export default function Packages() {
     []
   );
   const queryCache: any = useQueryClient();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm();
+  const [generateShipmentData, setGenerateShipmentData] = useState({
+    comments: "",
+    clientId: "",
+    warehouseShipmentId: "",
+  });
+  const [validateGenerateShipmentData, setValidateGenerateShipmentData] =
+    useState({
+      comments: false,
+      clientId: false,
+      warehouseShipmentId: false,
+    });
 
   const { globalToasts, pushToast } = useToastsContext();
 
@@ -126,13 +130,15 @@ export default function Packages() {
     },
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (e: any) => {
+    e.preventDefault();
+
     mutateGenerateShipment(
       {
         input: {
-          comments: data.comments,
-          clientId: Number(data.clientId),
-          warehouseShipmentId: Number(data.warehouseShipmentId),
+          comments: generateShipmentData.comments,
+          clientId: Number(generateShipmentData.clientId),
+          warehouseShipmentId: Number(generateShipmentData.warehouseShipmentId),
         },
       },
       {
@@ -169,6 +175,13 @@ export default function Packages() {
                   color: "success",
                 });
                 pushToast(newToast);
+
+                setGenerateShipmentData({
+                  clientId: "",
+                  comments: "",
+                  warehouseShipmentId: "",
+                });
+
                 setShowModal(!showModal);
                 if (isFetching === false) {
                   queryCache.removeQueries("getPackages", { stale: false });
@@ -199,6 +212,23 @@ export default function Packages() {
         },
       }
     );
+  };
+
+  const validateFields = () => {
+    let valid = true;
+
+    if (
+      generateShipmentData.clientId === "" ||
+      validateGenerateShipmentData.clientId ||
+      generateShipmentData.comments === "" ||
+      validateGenerateShipmentData.comments ||
+      generateShipmentData.warehouseShipmentId === "" ||
+      validateGenerateShipmentData.warehouseShipmentId
+    ) {
+      valid = false;
+    }
+
+    return !valid;
   };
 
   useEffect(() => {
@@ -323,11 +353,14 @@ export default function Packages() {
                 onCloseModal={() => setShowModal(!showModal)}
                 titleModal={"Crear Orden"}
               >
-                <EuiForm component="form" onSubmit={handleSubmit(onSubmit)}>
+                <EuiForm component="form" onSubmit={onSubmit}>
                   <GenerateShipmentInput
-                    register={register}
-                    setValue={setValue}
-                    errors={errors}
+                    generateShipmentData={generateShipmentData}
+                    setGenerateShipmentData={setGenerateShipmentData}
+                    validateGenerateShipmentData={validateGenerateShipmentData}
+                    setValidateGenerateShipmentData={
+                      setValidateGenerateShipmentData
+                    }
                   />
                   <EuiSpacer />
                   <EuiModalFooter>
@@ -338,6 +371,7 @@ export default function Packages() {
                       type="submit"
                       fill
                       isLoading={statusGenerateShipment === "loading"}
+                      isDisabled={validateFields()}
                     >
                       guardar
                     </Button>

@@ -1,68 +1,122 @@
 import { EuiFieldText, EuiFormRow } from "@elastic/eui";
-import { GeneralFormProps } from "../generalForm";
-import { useState } from "react";
 
-export const GenerateShipmentInput: React.FC<GeneralFormProps> = ({
-  errors,
-  register,
-  setValue,
+export interface GeneralShipmentData {
+  comments: string;
+  clientId: string;
+  warehouseShipmentId: string;
+}
+
+export interface ValidateGeneralShipmentData {
+  comments: boolean;
+  clientId: boolean;
+  warehouseShipmentId: boolean;
+}
+
+export interface GeneralShipmentInputProps {
+  generateShipmentData: GeneralShipmentData;
+  setGenerateShipmentData: React.Dispatch<
+    React.SetStateAction<GeneralShipmentData>
+  >;
+  validateGenerateShipmentData: ValidateGeneralShipmentData;
+  setValidateGenerateShipmentData: React.Dispatch<
+    React.SetStateAction<ValidateGeneralShipmentData>
+  >;
+}
+
+export const GenerateShipmentInput: React.FC<GeneralShipmentInputProps> = ({
+  generateShipmentData,
+  setGenerateShipmentData,
+  setValidateGenerateShipmentData,
+  validateGenerateShipmentData,
 }) => {
-  const [formShipment, setFormShipment] = useState({
-    comments: "",
-    clientId: "",
-    warehouseShipmentId: "",
-  });
-
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setFormShipment({ ...formShipment, [name]: value });
-    setValue(name, value);
+    setGenerateShipmentData({ ...generateShipmentData, [name]: value });
+  };
+
+  const onBlurValidator = (e: any) => {
+    const { name, value } = e.target;
+
+    if (name === "comments") {
+      if (value.length === 0 || value.length > 35 || value.length < 5) {
+        setValidateGenerateShipmentData({
+          ...validateGenerateShipmentData,
+          comments: true,
+        });
+      } else {
+        setValidateGenerateShipmentData({
+          ...validateGenerateShipmentData,
+          comments: false,
+        });
+      }
+    }
+    if (name === "clientId") {
+      if (value.length === 0 || value.length > 10) {
+        setValidateGenerateShipmentData({
+          ...validateGenerateShipmentData,
+          clientId: true,
+        });
+      } else {
+        setValidateGenerateShipmentData({
+          ...validateGenerateShipmentData,
+          clientId: false,
+        });
+      }
+    }
+    if (name === "warehouseShipmentId") {
+      if (value.length === 0 || value.length > 10) {
+        setValidateGenerateShipmentData({
+          ...validateGenerateShipmentData,
+          warehouseShipmentId: true,
+        });
+      } else {
+        setValidateGenerateShipmentData({
+          ...validateGenerateShipmentData,
+          warehouseShipmentId: false,
+        });
+      }
+    }
   };
 
   return (
     <>
       <EuiFormRow
         id="1"
-        error={errors.comments && "Ingresa tus comentarios"}
-        isInvalid={formShipment.comments === ""}
+        error={["Ingresa tus comentarios"]}
+        isInvalid={validateGenerateShipmentData.comments}
       >
         <EuiFieldText
           placeholder="Agregar comentarios"
           name="comments"
           onChange={handleChange}
-          inputRef={register("comments", {
-            required: formShipment.comments === "",
-          })}
+          onBlur={onBlurValidator}
+          value={generateShipmentData.comments}
         />
       </EuiFormRow>
       <EuiFormRow
         id="2"
-        error={errors.clientId && "ingresa el id de cliente"}
-        isInvalid={formShipment.clientId === ""}
+        error={["Ingresa el ID de cliente"]}
+        isInvalid={validateGenerateShipmentData.clientId}
       >
         <EuiFieldText
-          placeholder="Ingresa el id Cliente"
+          placeholder="Ingresa el ID Cliente"
           name="clientId"
           onChange={handleChange}
-          inputRef={register("clientId", {
-            required: formShipment.clientId === "",
-          })}
+          onBlur={onBlurValidator}
+          value={generateShipmentData.clientId}
         />
       </EuiFormRow>
       <EuiFormRow
         id="3"
-        error={
-          errors.warehouseShipmentId && "Ingresa el almacen de recolección"
-        }
-        isInvalid={formShipment.warehouseShipmentId === ""}
+        error={["Ingresa el almacén de recolección"]}
+        isInvalid={validateGenerateShipmentData.warehouseShipmentId}
       >
         <EuiFieldText
-          placeholder="Almacen de cliente"
+          placeholder="Almacén de cliente"
           name="warehouseShipmentId"
           onChange={handleChange}
-          inputRef={register("warehouseShipmentId", {
-            required: formShipment.warehouseShipmentId === "",
-          })}
+          onBlur={onBlurValidator}
+          value={generateShipmentData.warehouseShipmentId}
         />
       </EuiFormRow>
     </>
