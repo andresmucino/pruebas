@@ -16,12 +16,12 @@ import {
   EuiSpacer,
 } from "@elastic/eui";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Login() {
   const router = useRouter();
   const [login, setLogin] = useState({ email: "", password: "" });
-  const { loginEmailAndPassword, loading, error } = UseAuthContext();
+  const { loginEmailAndPassword, loading } = UseAuthContext();
 
   const handelChange = (e: any) => {
     const { name, value } = e.target;
@@ -34,12 +34,6 @@ export default function Login() {
     router.push("/");
   };
 
-  useEffect(() => {
-    if (error) {
-      alert("Correo/contreaseña invalidos");
-    }
-  }, [error]);
-
   if (loading === null) {
     <LoadingPage isLoading={true} />;
   }
@@ -48,7 +42,7 @@ export default function Login() {
     <EuiPageHeaderContent>
       <EuiPanel style={{ margin: "2vh" }} paddingSize="l">
         <EuiPageSection>
-          <EuiPageHeader pageTitle="Iniciar sesion" />
+          <EuiPageHeader pageTitle="Iniciar sesión" />
         </EuiPageSection>
         <EuiHorizontalRule />
         <EuiPanel paddingSize="l">
