@@ -216,7 +216,7 @@ export default function Messengers() {
 
   useEffect(() => {
     if (user === null) {
-      router.push("/");
+      router.push("/login");
     }
   }, [user]);
 

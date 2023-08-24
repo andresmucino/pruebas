@@ -2,12 +2,9 @@
 
 import { createContext, useEffect, useState } from "react";
 import { auth } from "../../config";
-import {
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  sendEmailVerification,
-} from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from "next/navigation";
 
 export type AuthContextType = {
   user: any;
@@ -15,6 +12,7 @@ export type AuthContextType = {
   signOut: () => void;
   loading: any;
   error: any;
+  userState: boolean;
 };
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -27,19 +25,21 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   const [user, setUser] = useState<any>();
-  const [loading] = useAuthState(auth);
+  const [loading, userState] = useAuthState(auth);
   const [error, setError] = useState<any>();
+  const router = useRouter();
 
   const loginEmailAndPassword = async (email: string, password: string) => {
-    try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-
-      setUser(result);
-    } catch (error: any) {
-      setError(error);
-    }
+     await signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        router.push("/");
+      })
+      .catch((error) => {
+        setError(error);
+        
+      });
   };
-
+  
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -54,7 +54,14 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
 
   return (
     <AuthContext.Provider
-      value={{ user, loginEmailAndPassword, signOut, loading, error }}
+      value={{
+        user,
+        loginEmailAndPassword,
+        signOut,
+        loading,
+        error,
+        userState,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -283,7 +283,7 @@ export default function CreateShipment() {
 
   useEffect(() => {
     if (user === null) {
-      router.push("/");
+      router.push("/login");
     }
   }, [user]);
 

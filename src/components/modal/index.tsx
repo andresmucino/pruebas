@@ -19,7 +19,7 @@ export const Modal: React.FC<ModalProps> = ({
   minWdith,
 }) => {
   return (
-    <EuiModal onClose={onCloseModal} style={{ minWidth: minWdith}}>
+    <EuiModal onClose={onCloseModal} style={{ minWidth: minWdith }}>
       <EuiModalHeader>
         <EuiModalHeaderTitle>{titleModal}</EuiModalHeaderTitle>
       </EuiModalHeader>
