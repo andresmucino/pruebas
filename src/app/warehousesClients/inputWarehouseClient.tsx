@@ -224,7 +224,7 @@ export const InputWarehouseClient: React.FC<InputWarehouseClientProps> = ({
 
   return (
     <>
-      <strong>Datos Generales</strong>
+      <strong>Datos generales</strong>
       <EuiHorizontalRule margin="s" />
       <EuiFlexGroup>
         <EuiFlexItem>
@@ -238,7 +238,7 @@ export const InputWarehouseClient: React.FC<InputWarehouseClientProps> = ({
               onChange={onChange}
               onBlur={onBlurValidator}
               value={warehouseData.instructions}
-              placeholder="intrucciones"
+              placeholder="Instrucciones"
             />
           </EuiFormRow>
         </EuiFlexItem>
@@ -253,7 +253,7 @@ export const InputWarehouseClient: React.FC<InputWarehouseClientProps> = ({
               onChange={onChange}
               onBlur={onBlurValidator}
               value={warehouseData.clientId}
-              placeholder="id cliente"
+              placeholder="Id cliente"
             />
           </EuiFormRow>
         </EuiFlexItem>
@@ -327,7 +327,7 @@ export const InputWarehouseClient: React.FC<InputWarehouseClientProps> = ({
                   onChange={onChange}
                   onBlur={onBlurValidator}
                   value={warehouseData.zipCode}
-                  placeholder="Codigo postal"
+                  placeholder="Código postal"
                 />
               </EuiFormRow>
             </EuiFlexItem>
@@ -343,7 +343,7 @@ export const InputWarehouseClient: React.FC<InputWarehouseClientProps> = ({
                   onChange={onChange}
                   onBlur={onBlurValidator}
                   value={warehouseData.externalNumber}
-                  placeholder="numero exterior"
+                  placeholder="Número exterior"
                 />
               </EuiFormRow>
               <EuiFormRow id="9">
@@ -352,7 +352,7 @@ export const InputWarehouseClient: React.FC<InputWarehouseClientProps> = ({
                   onChange={onChange}
                   onBlur={onBlurValidator}
                   value={warehouseData.internalNumber}
-                  placeholder="numero interior"
+                  placeholder="Número interior"
                 />
               </EuiFormRow>
               <EuiFormRow id="10">
@@ -415,7 +415,7 @@ export const InputWarehouseClient: React.FC<InputWarehouseClientProps> = ({
               onChange={onChange}
               onBlur={onBlurValidator}
               value={warehouseData.phone}
-              placeholder="télefono"
+              placeholder="Teléfono"
             />
           </EuiFormRow>
           <EuiFormRow
@@ -428,7 +428,7 @@ export const InputWarehouseClient: React.FC<InputWarehouseClientProps> = ({
               onChange={onChange}
               onBlur={onBlurValidator}
               value={warehouseData.email}
-              placeholder="correo"
+              placeholder="Correo"
             />
           </EuiFormRow>
         </EuiFlexItem>

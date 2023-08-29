@@ -105,7 +105,7 @@ export const InputCreateShipment: React.FC<InputCreateShipmentProps> = ({
         <>
           <strong>Sobre</strong>
           <EuiText size="s" color="subdued">
-            <p>Envia sobres, llaves, libros</p>
+            <p>Envía sobres, llaves, libros</p>
           </EuiText>
         </>
       ),
@@ -118,8 +118,8 @@ export const InputCreateShipment: React.FC<InputCreateShipmentProps> = ({
           <strong>Caja chica</strong>
           <EuiText size="s" color="subdued">
             <p>
-              Caracteristicas del paquete: Largo: 40, Ancho: 30, Alto: 25 y
-              hasta 1kg
+              Características del paquete: Largo: 40, Ancho: 30, Alto: 25 y
+              hasta 1 kg
             </p>
           </EuiText>
         </>
@@ -133,8 +133,8 @@ export const InputCreateShipment: React.FC<InputCreateShipmentProps> = ({
           <strong>Caja mediana</strong>
           <EuiText size="s" color="subdued">
             <p>
-              Caracteristicas del paquete: Largo: 30, Ancho: 40, Alto: 30 y
-              hasta 15kg
+              Características del paquete: Largo: 30, Ancho: 40, Alto: 30 y
+              hasta 15 kg
             </p>
           </EuiText>
         </>
@@ -148,8 +148,8 @@ export const InputCreateShipment: React.FC<InputCreateShipmentProps> = ({
           <strong>Caja grande</strong>
           <EuiText size="s" color="subdued">
             <p>
-              Caracteristicas del paquete: Largo: 40, Ancho: 50, Alto: 40 y
-              hasta 25kg
+              Características del paquete: Largo: 40, Ancho: 50, Alto: 40 y
+              hasta 25 kg
             </p>
           </EuiText>
         </>
@@ -329,7 +329,7 @@ export const InputCreateShipment: React.FC<InputCreateShipmentProps> = ({
     <EuiFlexGroup>
       <EuiFlexItem>
         <EuiPanel>
-          <strong>Direccion</strong>
+          <strong>Dirección</strong>
           <EuiHorizontalRule />
           <EuiFormRow
             id="4"
@@ -356,7 +356,7 @@ export const InputCreateShipment: React.FC<InputCreateShipmentProps> = ({
                     name="externalNumber"
                     onChange={onChange}
                     onBlur={onBlurValidator}
-                    placeholder="Numero exterior"
+                    placeholder="Número exterior"
                     value={packageData.externalNumber}
                   />
                 </EuiFormRow>
@@ -366,7 +366,7 @@ export const InputCreateShipment: React.FC<InputCreateShipmentProps> = ({
                   <EuiFieldText
                     name="internalNumber"
                     onChange={onChange}
-                    placeholder="Numero interior"
+                    placeholder="Número interior"
                     value={packageData.internalNumber}
                   />
                 </EuiFormRow>
@@ -421,7 +421,7 @@ export const InputCreateShipment: React.FC<InputCreateShipmentProps> = ({
               name="zipCode"
               onChange={onChange}
               onBlur={onBlurValidator}
-              placeholder="Codigo postal"
+              placeholder="Código postal"
               value={packageData.zipCode}
             />
           </EuiFormRow>
@@ -491,7 +491,7 @@ export const InputCreateShipment: React.FC<InputCreateShipmentProps> = ({
                   name="phone"
                   onChange={onChange}
                   onBlur={onBlurValidator}
-                  placeholder="Telefono"
+                  placeholder="Teléfono"
                   value={packageData.phone}
                 />
               </EuiFormRow>
@@ -591,7 +591,7 @@ export const InputGeneralForm: React.FC<InputGeneralFormProps> = ({
   return (
     <EuiFlexItem>
       <EuiPanel>
-        <strong>Datos Generales</strong>
+        <strong>Datos generales</strong>
         <EuiHorizontalRule />
         <EuiFormRow
           id="1"
@@ -615,7 +615,7 @@ export const InputGeneralForm: React.FC<InputGeneralFormProps> = ({
             name="idClient"
             onChange={onChange}
             onBlur={onBlurValidator}
-            placeholder="Id del cliente"
+            placeholder="ID del cliente"
             value={deliveryData.idClient}
           />
         </EuiFormRow>
@@ -628,7 +628,7 @@ export const InputGeneralForm: React.FC<InputGeneralFormProps> = ({
             name="warehouseShipmentId"
             onChange={onChange}
             onBlur={onBlurValidator}
-            placeholder="Almacen del cliente"
+            placeholder="ID del almacén de cliente"
             value={deliveryData.warehouseShipmentId}
           />
         </EuiFormRow>
@@ -651,7 +651,7 @@ export const StatePackages: React.FC<StatePackagesProps> = ({
           justifyContent: "space-between",
         }}
       >
-        <strong> Paquetes agregados</strong>
+        <strong>Paquetes agregados</strong>
         <Button type="button" onClick={onClick} isDisabled={isDisabled}>
           Agregar paquetes
         </Button>
@@ -685,7 +685,7 @@ export const StatePackages: React.FC<StatePackagesProps> = ({
                   <EuiDescriptionList
                     listItems={[
                       {
-                        title: "Direccion:",
+                        title: "Dirección:",
                         description: `${i.street} ${i.externalNumber} 
                         ${i.internalNumber} ${i.municipality} ${i.neigthboorhood} 
                         ${i.zipCode} ${i.state}`,

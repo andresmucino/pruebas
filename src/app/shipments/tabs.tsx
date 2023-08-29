@@ -78,7 +78,7 @@ export const WarehouseTab: React.FC<TabWarehouseProps> = ({
                 description={`${warehouseShipment.firstName} ${warehouseShipment.lastName}`}
               />
               <SimpleList
-                title="Télefono: "
+                title="Teléfono: "
                 description={`${warehouseShipment.phone}`}
               />
               <SimpleList
@@ -125,7 +125,7 @@ export const PackagesTabs: React.FC<PackagesTabsProps> = ({
           tabs={[
             {
               id: "direction--id",
-              name: "Informacion General",
+              name: "Información general",
               content: (
                 <>
                   <EuiDescriptionList
@@ -145,7 +145,7 @@ export const PackagesTabs: React.FC<PackagesTabsProps> = ({
                     title={"Contacto: "}
                     description={`${i.firstName} ${i.lastName}`}
                   />
-                  <SimpleList title="Télefono: " description={`${i.phone}`} />
+                  <SimpleList title="Teléfono: " description={`${i.phone}`} />
                   <SimpleList title="Correo: " description={`${i.email}`} />
                 </>
               ),
@@ -162,7 +162,7 @@ export const PackagesTabs: React.FC<PackagesTabsProps> = ({
                   }}
                 >
                   <SimpleList title="Id paquete: " description={`${i.id}`} />
-                  <SimpleList title="Guia: " description={`${i.guide}`} />
+                  <SimpleList title="Guía: " description={`${i.guide}`} />
                   <SimpleList
                     title="Estatus del paquete: "
                     description={`${i.description}`}
@@ -189,7 +189,7 @@ export const PackagesTabs: React.FC<PackagesTabsProps> = ({
                             description={`${ev.comments}`}
                           />
                           <SimpleList
-                            title="Reribido: "
+                            title="Recibido: "
                             description={`${ev.personReceived}`}
                           />
                           <SimpleList
@@ -279,7 +279,7 @@ export const MessengerTabs: React.FC<MessengerTabProps> = ({
                 description={`${messenger.firstName} ${messenger.lastName}`}
               />
               <SimpleList
-                title={"Télefono: "}
+                title={"Teléfono: "}
                 description={`${messenger.phone}`}
               />
             </div>

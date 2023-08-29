@@ -39,7 +39,7 @@ export const Menu = () => {
       <EuiHorizontalRule margin="xs" />
       <EuiListGroupItem
         iconType="documentEdit"
-        label="Crear Envio"
+        label="Crear envío"
         onClick={() => "/createShipment"}
         href="/createShipment"
       />
@@ -53,14 +53,14 @@ export const Menu = () => {
       <EuiHorizontalRule margin="xs" />
       <EuiListGroupItem
         iconType="kubernetesPod"
-        label="historial de paquetes"
+        label="Historial de paquetes"
         onClick={() => "/packagesHistory"}
         href="/packagesHistory"
       />
       <EuiHorizontalRule margin="xs" />
       <EuiListGroupItem
         iconType="dotInCircle"
-        label="Envios"
+        label="Envíos"
         onClick={() => "/shipments"}
         href="/shipments"
       />

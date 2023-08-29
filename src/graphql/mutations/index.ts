@@ -7,3 +7,4 @@ export * from "./assignCourierShipment";
 export * from "./createWahouseShipment";
 export * from "./registerUser";
 export * from "./createManyPackages";
+export * from "./changeShipmentStatus";

@@ -77,7 +77,7 @@ const AssignCourier: React.FC<AssignCourierProps> = ({
     >
       <div style={{ display: "flex", alignItems: "flex-end" }}>
         <EuiFormRow
-          label="Ingresa id mensajero"
+          label="Ingresa ID mensajero"
           style={{ marginRight: "0.5rem" }}
         >
           <EuiFieldText name="id" value={idValue.id} onChange={onChange} />
@@ -116,6 +116,7 @@ export default function Shipments() {
   const [totalCount, setTotalCount] = useState(0);
   const [shipments, setShipments] = useState<any[]>([]);
   const [id, setId] = useState<number>(0);
+  const [statusShipment, setStatusShipment] = useState("");
   const { globalToasts, pushToast } = useToastsContext();
 
   const queryVars = {
@@ -224,11 +225,11 @@ export default function Shipments() {
     },
     {
       field: "updatedAt",
-      name: "Actualizada",
+      name: "Actualizado",
     },
     {
       field: "actions",
-      name: "Acciones",
+      name: "",
       actions: [
         {
           name: "ruta",
@@ -271,7 +272,7 @@ export default function Shipments() {
                   setPageSize={setPageSize}
                   totalItemCount={totalCount}
                   pageSizeOptions={pageSizeOptions}
-                  noItemsMessage={"No se encontraron envios"}
+                  noItemsMessage={"No se encontraron envíos"}
                 />
               </EuiPanel>
             </EuiPanel>

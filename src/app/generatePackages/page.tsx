@@ -99,8 +99,6 @@ export default function GeneratePackages() {
     );
   }, [files]);
 
-  console.log(items);
-
   const submitManyPackages = () => {
     mutate(
       { input: { packages: items } },
@@ -123,8 +121,8 @@ export default function GeneratePackages() {
             title: "Cliente",
             text: (
               <p>
-                No se pudieron guardar algunas guias correctamente, verifica la
-                informacion ingresada, intenta de nuevo
+                No se pudieron guardar algunas guías correctamente, verifica la
+                información ingresada, intenta de nuevo
               </p>
             ),
             color: "danger",
@@ -154,7 +152,7 @@ export default function GeneratePackages() {
         },
         {
           description: `${expand.phone}`,
-          title: "Telefono",
+          title: "Teléfono",
         },
         {
           description: `${expand.email}`,
@@ -181,15 +179,15 @@ export default function GeneratePackages() {
         },
         {
           description: `${expand.externalNumber}`,
-          title: "Numero exterior",
+          title: "Número exterior",
         },
         {
           description: `${expand.internalNumber}`,
-          title: "Numero interior",
+          title: "Número interior",
         },
         {
           description: `${expand.zipCode}`,
-          title: "Codigo postal",
+          title: "Código postal",
         },
       ];
 
@@ -234,7 +232,7 @@ export default function GeneratePackages() {
     },
     {
       field: "guide",
-      name: "Guia",
+      name: "Guía",
       isExpander: true,
     },
 
@@ -252,7 +250,7 @@ export default function GeneratePackages() {
       align: "right",
       width: "80px",
       isExpander: true,
-      name: "Actions",
+      name: "",
       render: (user: any) => {
         const itemIdToExpandedRowMapValues = { ...itemIdToExpandedRowMap };
         return (
@@ -306,14 +304,14 @@ export default function GeneratePackages() {
                 isLoading={status === "loading"}
                 fill
               >
-                Agregar guias
+                Agregar guías
               </Button>
             </Header>
             <EuiHorizontalRule />
             <EuiFormRow>
               <EuiFieldText
                 name="idClient"
-                placeholder="Ingresa el id del cliente para generar guias"
+                placeholder="Ingresa el ID del cliente para generar guías"
                 value={idClient}
                 onChange={onChaeIdClient}
               />

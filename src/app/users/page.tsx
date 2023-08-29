@@ -80,7 +80,7 @@ export default function Users() {
     },
     {
       field: "phone",
-      name: "Télefono",
+      name: "Teléfono",
     },
     {
       field: "email",
@@ -107,7 +107,7 @@ export default function Users() {
             items={users}
             totalItemCount={totalCount}
             pageSizeOptions={pageSizeOptions}
-            noItemsMessage={""}
+            noItemsMessage={"No se encontraron usuarios"}
             itemId={"id"}
           />
         </EuiPanel>

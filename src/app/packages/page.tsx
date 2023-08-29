@@ -192,7 +192,7 @@ export default function Packages() {
                 newToast.push({
                   id: "3",
                   title: "Paquetes",
-                  text: <p>No se pudieron agregar packates a la orden</p>,
+                  text: <p>No se pudieron agregar paquetes a la orden</p>,
                   color: "danger",
                 });
                 pushToast(newToast);
@@ -205,7 +205,7 @@ export default function Packages() {
           newToast.push({
             id: "4",
             title: "Envio",
-            text: <p>No se genero correctamenta la orden</p>,
+            text: <p>No se generó correctamente la orden</p>,
             color: "danger",
           });
           pushToast(newToast);
@@ -274,7 +274,7 @@ export default function Packages() {
     },
     {
       field: "guide",
-      name: "Guia",
+      name: "Guía",
     },
     {
       field: "status.description",
@@ -282,7 +282,7 @@ export default function Packages() {
     },
     {
       field: "shipment.id",
-      name: "Numero de envio",
+      name: "Número de envio",
     },
     {
       field: "client.id",
@@ -320,7 +320,7 @@ export default function Packages() {
             </Header>
             <EuiHorizontalRule />
             <EuiPanel>
-              <EuiFormRow label="Id de cliente">
+              <EuiFormRow label="ID de cliente">
                 <EuiFieldSearch
                   style={{ minWidth: 160 }}
                   onChange={(e) => {
@@ -351,7 +351,7 @@ export default function Packages() {
             <>
               <Modal
                 onCloseModal={() => setShowModal(!showModal)}
-                titleModal={"Crear Orden"}
+                titleModal={"Crear orden"}
               >
                 <EuiForm component="form" onSubmit={onSubmit}>
                   <GenerateShipmentInput
@@ -365,7 +365,7 @@ export default function Packages() {
                   <EuiSpacer />
                   <EuiModalFooter>
                     <Button onClick={() => setShowModal(!showModal)}>
-                      cancelar
+                      Cancelar
                     </Button>
                     <Button
                       type="submit"
@@ -373,7 +373,7 @@ export default function Packages() {
                       isLoading={statusGenerateShipment === "loading"}
                       isDisabled={validateFields()}
                     >
-                      guardar
+                      Crear
                     </Button>
                   </EuiModalFooter>
                 </EuiForm>

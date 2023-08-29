@@ -3,6 +3,7 @@
 import { Button, LoadingPage } from "@/components";
 import { UseAuthContext } from "@/hooks/login";
 import {
+  EuiButtonIcon,
   EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
@@ -22,6 +23,7 @@ export default function Login() {
   const router = useRouter();
   const [login, setLogin] = useState({ email: "", password: "" });
   const { loginEmailAndPassword, loading } = UseAuthContext();
+  const [showModal, setShowModal] = useState(false);
 
   const handelChange = (e: any) => {
     const { name, value } = e.target;
@@ -50,13 +52,29 @@ export default function Login() {
             <EuiFlexItem></EuiFlexItem>
             <EuiFlexItem grow={1} style={{ justifyContent: "center" }}>
               <EuiFormRow id="1">
-                <EuiFieldText fullWidth onChange={handelChange} name="email" />
+                <EuiFieldText
+                  fullWidth
+                  onChange={handelChange}
+                  name="email"
+                  placeholder="Correo"
+                />
               </EuiFormRow>
               <EuiFormRow id="2">
                 <EuiFieldText
-                  onChange={handelChange}
+                  placeholder="Contraseña"
+                  type={showModal === true ? "password" : "text"}
                   name="password"
-                  type="password"
+                  onChange={handelChange}
+                  append={
+                    <EuiButtonIcon
+                      style={{ backgroundColor: "white" }}
+                      onClick={() => {
+                        setShowModal(!showModal);
+                      }}
+                      iconType={showModal === true ? "eye" : "eyeClosed"}
+                      aria-label="eye"
+                    />
+                  }
                 />
               </EuiFormRow>
               <div style={{ display: "inline-grid", width: "150px" }}>

@@ -127,7 +127,7 @@ export default function About() {
                     isLoading={status === "loading"}
                     isDisabled={validateFields()}
                   >
-                    Registarse
+                    Registrarse
                   </Button>
                   <EuiSpacer />
                 </div>

@@ -208,9 +208,7 @@ export default function CreateShipment() {
                       newToast.push({
                         id: "2",
                         title: "Delivery",
-                        text: (
-                          <p>Error al crear el delivery, intenta de nuevo</p>
-                        ),
+                        text: <p>Error al crear el envío, intenta de nuevo</p>,
                         color: "danger",
                       });
                       pushToast(newToast);
@@ -223,7 +221,7 @@ export default function CreateShipment() {
                 newToast.push({
                   id: "3",
                   title: "Delivery",
-                  text: <p>Error al crear el delivery, intenta de nuevo</p>,
+                  text: <p>Error al crear el envío, intenta de nuevo</p>,
                   color: "danger",
                 });
                 pushToast(newToast);
@@ -236,7 +234,7 @@ export default function CreateShipment() {
           newToast.push({
             id: "4",
             title: "Delivery",
-            text: <p>Error al crear el delivery, intenta de nuevo</p>,
+            text: <p>Error al crear el envío, intenta de nuevo</p>,
             color: "danger",
           });
           pushToast(newToast);
@@ -301,7 +299,7 @@ export default function CreateShipment() {
         <>
           <EuiPanel style={{ margin: "2vh", height: "auto" }}>
             <EuiForm component="form" onSubmit={onSubmit}>
-              <Header title={`Crear envio`}>
+              <Header title={`Crear envío`}>
                 <Button
                   type="submit"
                   size="m"

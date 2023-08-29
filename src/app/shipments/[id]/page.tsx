@@ -9,6 +9,7 @@ import {
 import { Button, Header, LoadingPage, badges } from "@/components";
 import {
   AssignCourierShipment,
+  ChangeShipmentStatus,
   GetShipment,
   clientGeneric,
 } from "@/graphql";
@@ -43,6 +44,10 @@ export default function Shipments() {
     useState<WarehouseShipmentInterface>({});
   const [messengerShipment, setMessengerShipment] =
     useState<MessengerShipmentInterface>({});
+  const [shipmentStatus, setShipmentStatus] = useState<{
+    id?: number;
+    status?: string;
+  }>({});
 
   const [idValue, setIdValue] = useState({ id: "" });
 
@@ -64,6 +69,17 @@ export default function Shipments() {
       );
     },
   });
+
+  const { mutate: changeStatusmutate, status: changeStatusStatus } =
+    useMutation({
+      mutationKey: ["changeShipmentStatus"],
+      mutationFn: (changeShipment: any) => {
+        return clientGeneric(apiUrl, user).request(
+          ChangeShipmentStatus,
+          changeShipment
+        );
+      },
+    });
 
   const { globalToasts, pushToast } = useToastsContext();
 
@@ -124,8 +140,14 @@ export default function Shipments() {
         statusId: data.shipment.shipmentStatus.id,
         status: data.shipment.shipmentStatus.status,
       });
+      setShipmentStatus({
+        id: data.shipment.shipmentStatus.id,
+        status: data.shipment.shipmentStatus.status,
+      });
     }
-  }, [status]);
+  }, [status, data]);
+
+  console.log(shipmentStatus.id);
 
   const onChange = (e: any) => {
     const { name, value } = e.target;
@@ -159,6 +181,40 @@ export default function Shipments() {
     setIdValue({ id: "" });
   };
 
+  const cerrarOrden = () => {
+    changeStatusmutate(
+      {
+        input: { id: Number(params.id), relationId: 4 },
+      },
+      {
+        onSuccess: () => {
+          const newToast: Toast[] = [];
+          newToast.push({
+            id: "1",
+            title: "Envio",
+            text: <p>Envío terminado</p>,
+            color: "success",
+          });
+          pushToast(newToast);
+
+          if (isFetching === false) {
+            queryCache.removeQueries("getShipment", { stale: true });
+          }
+        },
+        onError: () => {
+          const newToast: Toast[] = [];
+          newToast.push({
+            id: "2",
+            title: "Envio",
+            text: <p>Error al terminar el envío, verifica la ruta</p>,
+            color: "danger",
+          });
+          pushToast(newToast);
+        },
+      }
+    );
+  };
+
   useEffect(() => {
     if (user === null) {
       router.push("/login");
@@ -190,7 +246,14 @@ export default function Shipments() {
                     : ""
                 }
               >
-                {""}
+                {shipmentStatus.id === 2 && (
+                  <Button
+                    onClick={cerrarOrden}
+                    isLoading={changeStatusStatus === "loading"}
+                  >
+                    Cerrar orden
+                  </Button>
+                )}
               </Header>
               <EuiHorizontalRule />
               <EuiFlexGroup>

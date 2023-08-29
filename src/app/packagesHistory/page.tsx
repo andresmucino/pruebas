@@ -101,7 +101,7 @@ export default function PackagesHistory() {
               <EuiFlexItem>
                 <EuiFieldSearch
                   onChange={onChange}
-                  placeholder={"Buscar por id del paquete"}
+                  placeholder={"Buscar por ID del paquete"}
                   onSearch={searchValueOnClick}
                   isLoading={status === "loading"}
                 />
@@ -119,7 +119,7 @@ export default function PackagesHistory() {
                 style={{ alignItems: "center", alignSelf: "center" }}
               >
                 <SimpleList
-                  title={"Id paquete: "}
+                  title={"ID paquete: "}
                   description={history[0]?.idPackage}
                 />
               </EuiFlexItem>
@@ -134,7 +134,7 @@ export default function PackagesHistory() {
                     <EuiSteps titleSize="xs" steps={steps} />
                   ) : (
                     <EuiCard
-                      title="Ingresa una guia para ver su historial"
+                      title="Ingresa una guía para ver su historial"
                       description=""
                     />
                   )}

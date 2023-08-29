@@ -131,8 +131,8 @@ export default function Clients() {
             text: (
               <>
                 <p>Creado correctamente</p>
-                <p>comparte la url con el cliente</p>
-                <p>url: {data.registerClient.url}</p>
+                <p>Comparte la URL con el cliente</p>
+                <p>URL: {data.registerClient.url}</p>
               </>
             ),
             color: "success",
@@ -269,7 +269,7 @@ export default function Clients() {
                       isLoading={createOneQueryStatus === "loading"}
                       isDisabled={validateFields()}
                     >
-                      Guardar
+                      Crear
                     </Button>
                   </EuiModalFooter>
                 </EuiForm>

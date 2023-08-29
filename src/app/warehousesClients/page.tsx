@@ -265,7 +265,7 @@ export default function GeneratePackages() {
         },
         {
           description: `${expand.phoneContact}`,
-          title: "Télefono",
+          title: "Teléfono",
         },
         {
           description: `${expand.emailContact}`,
@@ -273,7 +273,7 @@ export default function GeneratePackages() {
         },
         {
           description: `${expand.instructions}`,
-          title: "Intrecciones",
+          title: "Instrucciones",
         },
       ];
 
@@ -296,19 +296,19 @@ export default function GeneratePackages() {
         },
         {
           description: `${expand.externalNumber}`,
-          title: "Numero exterior",
+          title: "Número exterior",
         },
         {
           description: `${
             Number.isNaN(expand.internalNumber)
-              ? "Sin nuero interior"
+              ? "Sin número interior"
               : expand.internalNumber
           }`,
-          title: "Numero interior",
+          title: "Número interior",
         },
         {
           description: `${expand.zipCode}`,
-          title: "Codigo postal",
+          title: "Código postal",
         },
       ];
 
@@ -316,7 +316,7 @@ export default function GeneratePackages() {
         <div style={{ display: "flex" }}>
           <div>
             <EuiText>
-              <h2>Contacto</h2>
+              <h3>Contacto</h3>
             </EuiText>
             <EuiDescriptionList
               listItems={listitemContact}
@@ -326,7 +326,7 @@ export default function GeneratePackages() {
           </div>
           <div>
             <EuiText>
-              <h2>Dirección</h2>
+              <h3>Dirección</h3>
             </EuiText>
             <EuiDescriptionList
               listItems={listItemDirection}
@@ -345,15 +345,16 @@ export default function GeneratePackages() {
       field: "id",
       name: "ID",
       isExpander: true,
+      width: "100px",
     },
     {
       field: "fullName",
-      name: "Nombre cliente",
+      name: "Cliente",
       isExpander: true,
     },
     {
       field: "phone",
-      name: "Télefono",
+      name: "Teléfono",
       isExpander: true,
     },
 
@@ -376,7 +377,7 @@ export default function GeneratePackages() {
       align: "right",
       width: "80px",
       isExpander: true,
-      name: "Actions",
+      name: "",
       render: (wh: any) => {
         const itemIdToExpandedRowMapValues = { ...itemIdToExpandedRowMap };
         return (
@@ -435,7 +436,7 @@ export default function GeneratePackages() {
           {showModal && (
             <Modal
               onCloseModal={() => setShowModal(!showModal)}
-              titleModal={"Crear Almacén"}
+              titleModal={"Crear almacén"}
               minWdith={950}
             >
               <EuiForm component="form" onSubmit={onSubmit}>
